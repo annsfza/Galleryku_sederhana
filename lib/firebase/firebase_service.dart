@@ -1,38 +1,37 @@
-import 'dart:io'; // Untuk mengakses file lokal
-import 'package:firebase_storage/firebase_storage.dart'; // Untuk Firebase Storage
-import 'package:cloud_firestore/cloud_firestore.dart'; // Untuk Firestore
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Fungsi untuk mengupload gambar ke Firebase Storage
+  // Fungsi untuk upload gambar ke Firebase Storage dan menyimpan metadata ke Firestore
   Future<void> uploadImage(File imageFile) async {
     try {
-      // Referensi lokasi penyimpanan di Firebase Storage
-      String fileName = DateTime.now().toIso8601String();
+      // Buat referensi penyimpanan
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString(); // Unique file name
       Reference storageRef = _storage.ref().child('gallery/$fileName');
-      
-      // Upload file ke Firebase Storage
+
+      // Upload gambar ke Storage
       UploadTask uploadTask = storageRef.putFile(imageFile);
       await uploadTask;
 
-      // Mendapatkan URL download dari gambar yang diupload
+      // Mendapatkan URL download dari gambar yang di-upload
       String downloadUrl = await storageRef.getDownloadURL();
 
-      // Menyimpan URL gambar ke Firestore
+      // Menyimpan URL gambar dan waktu upload ke Firestore
       await _firestore.collection('gallery').add({
         'url': downloadUrl,
-        'uploaded_at': Timestamp.now(),
+        'uploaded_at': Timestamp.now(), // Menyimpan timestamp saat upload
       });
-
-      print("Gambar berhasil di-upload dan URL disimpan di Firestore.");
+      print("Gambar berhasil di-upload dan URL disimpan.");
     } catch (e) {
       print("Error uploading image: $e");
     }
   }
 
-  // Mendapatkan stream gambar dari Firestore
+  // Mendapatkan Stream dari gambar di Firestore
   Stream<QuerySnapshot> getGalleryImages() {
     return _firestore.collection('gallery').orderBy('uploaded_at', descending: true).snapshots();
   }

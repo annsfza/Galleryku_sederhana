@@ -1,4 +1,4 @@
-import 'dart:io'; // Untuk mengakses File
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore
 import 'package:image_picker/image_picker.dart'; // Untuk memilih gambar
@@ -12,7 +12,8 @@ class GalleryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gallery'),
+        title: Text('Gallery'), titleTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+        backgroundColor: Colors.black,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firebaseService.getGalleryImages(),
@@ -26,7 +27,7 @@ class GalleryScreen extends StatelessWidget {
 
           List<QueryDocumentSnapshot> docs = snapshot.data!.docs;
 
-          return ImageGrid(docs: docs); // Widget untuk menampilkan gambar dalam grid
+          return ImageGrid(docs: docs);
         },
       ),
       floatingActionButton: FloatingActionButton(
