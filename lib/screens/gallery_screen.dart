@@ -12,7 +12,7 @@ class GalleryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Galleryy'),
+        title: Text('Gallery'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firebaseService.getGalleryImages(),
