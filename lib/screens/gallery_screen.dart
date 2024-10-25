@@ -4,15 +4,32 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore
 import 'package:image_picker/image_picker.dart'; // Untuk memilih gambar
 import 'package:myapp/firebase/firebase_service.dart'; // Firebase service
 import 'package:myapp/widgets/image_grid.dart'; // Grid untuk menampilkan gambar
+import 'package:myapp/widgets/bar_menu.dart'; // BarMenu widget
 
-class GalleryScreen extends StatelessWidget {
+class GalleryScreen extends StatefulWidget {
+  @override
+  _GalleryScreenState createState() => _GalleryScreenState();
+}
+
+class _GalleryScreenState extends State<GalleryScreen> {
   final FirebaseService firebaseService = FirebaseService();
+  int _selectedIndex = 0;
+
+  // Fungsi untuk mengatur indeks yang dipilih
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    
+    // Aksi berdasarkan item yang dipilih
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gallery'), titleTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+        title: Text('Gallery'),
+        titleTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
         backgroundColor: Colors.black,
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -26,7 +43,6 @@ class GalleryScreen extends StatelessWidget {
           }
 
           List<QueryDocumentSnapshot> docs = snapshot.data!.docs;
-
           return ImageGrid(docs: docs);
         },
       ),
@@ -41,6 +57,10 @@ class GalleryScreen extends StatelessWidget {
           }
         },
         child: Icon(Icons.add),
+      ),
+      bottomNavigationBar: BarMenu(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
   }
